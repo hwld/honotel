@@ -1,3 +1,3 @@
 # honotel
 
-監視やOpelTelemetryの学習用
+監視やOpenTelemetryの学習用
