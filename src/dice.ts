@@ -1,7 +1,7 @@
-import { Exception, Span, SpanStatusCode, trace } from "@opentelemetry/api";
-import { exec } from "child_process";
+import { Span, metrics, trace } from "@opentelemetry/api";
 
 const tracer = trace.getTracer("dice-lib");
+const meter = metrics.getMeter("dice-lib");
 
 const rollOnce = (i: number, min: number, max: number): number => {
   return tracer.startActiveSpan(`rollOnce:${i}`, (span: Span) => {
@@ -19,18 +19,6 @@ export const rollTheDice = (
 ): number[] => {
   return tracer.startActiveSpan("rollTheDice", (span: Span) => {
     const results = [...new Array(rolls)].map((_, i) => rollOnce(i, min, max));
-
-    try {
-      throw new Error("error sample");
-    } catch (e) {
-      if (!(e instanceof Error)) {
-        throw e;
-      }
-
-      span.recordException(e);
-      span.setStatus({ code: SpanStatusCode.ERROR });
-    }
-
     span.end();
     return results;
   });
