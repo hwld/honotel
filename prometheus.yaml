@@ -3,4 +3,3 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: ["otlp-collector:8889"]
-      - targets: ["otlp-collector:8888"]
