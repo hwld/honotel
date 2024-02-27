@@ -18,6 +18,9 @@ exporters:
     tls:
       insecure: true
 
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+
 service:
   pipelines:
     traces:
@@ -28,4 +31,4 @@ service:
       exporters: [prometheus]
     logs:
       receivers: [otlp]
-      exporters: [debug]
+      exporters: [loki]

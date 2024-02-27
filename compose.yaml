@@ -1,6 +1,6 @@
 services:
   otlp-collector:
-    image: otel/opentelemetry-collector
+    image: otel/opentelemetry-collector-contrib
     restart: always
     ports:
       - "8889:8889"
@@ -8,6 +8,7 @@ services:
       - "4317:4317"
     volumes:
       - "./collector-config.yaml:/etc/otelcol/config.yaml"
+    command: ["--config=/etc/otelcol/config.yaml"]
 
   prometheus:
   # https://github.com/grafana/grafana/issues/80185
@@ -25,6 +26,11 @@ services:
       - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "16686:16686"
+  
+  loki:
+    image: grafana/loki
+    ports:
+      - "3100:3100"
 
   grafana:
     image: grafana/grafana-enterprise
