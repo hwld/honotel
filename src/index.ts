@@ -4,8 +4,10 @@ import "./instrumentation";
 import { rollTheDice } from "./dice";
 import { HTTPException } from "hono/http-exception";
 import { SpanStatusCode, trace } from "@opentelemetry/api";
+import { logs, SeverityNumber } from "@opentelemetry/api-logs";
 
 const tracer = trace.getTracer("backend", "1.0");
+const logger = logs.getLogger("backend", "1.0");
 
 const app = new Hono();
 
@@ -36,6 +38,12 @@ app.get("/internal-error", () => {
 });
 
 app.get("/rolldice", (c) => {
+  logger.emit({
+    severityNumber: SeverityNumber.INFO,
+    severityText: "INFO",
+    body: "start rolldice",
+  });
+
   const rollsQuery = c.req.query("rolls");
   const rolls = rollsQuery ? parseInt(rollsQuery.toString()) : NaN;
   if (isNaN(rolls)) {

@@ -1,8 +1,14 @@
 import { diag, DiagConsoleLogger, DiagLogLevel } from "@opentelemetry/api";
+import { logs } from "@opentelemetry/api-logs";
+import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-proto";
 import { OTLPMetricExporter } from "@opentelemetry/exporter-metrics-otlp-proto";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
 import { HostMetrics } from "@opentelemetry/host-metrics";
 import { Resource } from "@opentelemetry/resources";
+import {
+  LoggerProvider,
+  SimpleLogRecordProcessor,
+} from "@opentelemetry/sdk-logs";
 import {
   MeterProvider,
   PeriodicExportingMetricReader,
@@ -35,6 +41,12 @@ const hostMetrics = new HostMetrics({
   }),
   name: "host-metrics",
 });
+
+const loggerProvider = new LoggerProvider();
+loggerProvider.addLogRecordProcessor(
+  new SimpleLogRecordProcessor(new OTLPLogExporter())
+);
+logs.setGlobalLoggerProvider(loggerProvider);
 
 sdk.start();
 hostMetrics.start();
